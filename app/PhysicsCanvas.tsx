@@ -27,6 +27,7 @@ const PhysicsCanvas = () => {
     const engineRef = useRef<Matter.Engine | null>(null);
     const runnerRef = useRef<Matter.Runner | null>(null);
     const renderRef = useRef<Matter.Renderer | null>(null);
+    const [message, setMessage] = useState("");
     
     
     // SEHR UNSICHER OB DAS DER RICHTIG WEG IST DAS OBJEKT NEBEN DEM GEKLICKTEN OBJECT DARZUSTELLEN!!!
@@ -43,9 +44,7 @@ const PhysicsCanvas = () => {
         // Matter.js Setup
         const Engine = Matter.Engine,
         Render = Matter.Render,
-        Runner = Matter.Runner,
-        Bodies = Matter.Bodies,
-        Composite = Matter.Composite;
+        Runner = Matter.Runner;
 
         const engine = Engine.create();
         const render = Render.create({
@@ -58,20 +57,13 @@ const PhysicsCanvas = () => {
         },
         });
 
-      
-
-        // create two boxes and a ground
-        const boxA = Bodies.rectangle(300, 150, 80, 80);
-        const boxB = Bodies.rectangle(500, 50, 80, 80);
-        const groundA = Bodies.rectangle(400, 250, 800, 20, { isStatic: true, angle: Math.PI / 8});
-        const groundB = Bodies.rectangle(800, 700, 810, 20, { isStatic: true, angle: -Math.PI / 8 });
-        const groundC = Bodies.rectangle(400, 1000, 810, 20, { isStatic: true, angle: Math.PI / 8 });
-        const groundD = Bodies.rectangle(1200, 1300, 2400, 20, { isStatic: true});
-        const bodiesTest = [boxA,boxB,groundA,groundB,groundC,groundD]
-
-        // add all of the bodies to the world
-        Composite.add(engine.world, bodiesTest);
-
+        const fetchMessage = async () => {
+            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hello`);
+            const data = await res.json();
+            setMessage(data.message);
+        };
+        fetchMessage();
+        
         // run the renderer
         Render.run(render);
 
@@ -92,6 +84,8 @@ const PhysicsCanvas = () => {
         //addExampleChain to the System
         addChain()
 
+        initializeObjectsInWorld();
+
         // Cleanup on component unmount
         return () => {
         Matter.Render.stop(render);
@@ -99,6 +93,20 @@ const PhysicsCanvas = () => {
         render.canvas.remove();
         };
     }, []);
+
+    const initializeObjectsInWorld = () => {
+        // create two boxes and a ground
+        const boxA = Matter.Bodies.rectangle(300, 150, 80, 80);
+        const boxB = Matter.Bodies.rectangle(500, 50, 80, 80);
+        const groundA = Matter.Bodies.rectangle(400, 250, 800, 20, { isStatic: true, angle: Math.PI / 8});
+        const groundB = Matter.Bodies.rectangle(800, 700, 810, 20, { isStatic: true, angle: -Math.PI / 8 });
+        const groundC = Matter.Bodies.rectangle(400, 1000, 810, 20, { isStatic: true, angle: Math.PI / 8 });
+        const groundD = Matter.Bodies.rectangle(1200, 1300, 2400, 20, { isStatic: true});
+        const bodiesTest = [boxA,boxB,groundA,groundB,groundC,groundD]
+
+        // add all of the bodies to the world
+        Matter.Composite.add(engineRef.current.world, bodiesTest);
+    }
 
     const addChain = () => {
         // Schritt 1: Rechtecke als Kettenglieder erstellen
@@ -230,6 +238,8 @@ const PhysicsCanvas = () => {
         }
     }
 
+
+
     return <div>
             {/*Pause/Play*/}
             <button
@@ -272,6 +282,7 @@ const PhysicsCanvas = () => {
             </button>
             {/*Option menu next to the clicked Object*/}
             {/*{clickedObject && <ObjectOptionController clickedObject={clickedObject} />}*/}
+            <div style={{position: 'absolute', top: '1000px', left: '200px'}}>{message}</div>
             <div ref={sceneRef}></div>    
             <ToolboxWrapper addBody={addBody}/>
         </div>;
