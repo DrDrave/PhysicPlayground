@@ -6,6 +6,7 @@ import Matter from 'matter-js';
 import ToolboxWrapper from './ToolboxWrapper';
 // @ts-expect-error: TS with external library
 import _ from 'lodash';
+import { parse, stringify } from 'flatted';
 
 //TODO:
 //Verändern der Parameter in der Simulation
@@ -41,30 +42,46 @@ const PhysicsCanvas = () => {
 
     //Funktionen die die API testen
     const fetchData = async () => {
-        const response = await fetch('/api/data');
-        const data = await response.json();
-        console.log(data);
+        const response = await fetch('/api/supaBaseTest');
+        const savedState = await response.json();
+        const savedStateParsed = parse(savedState[0].scene)
+        if (savedStateParsed) {
+            // savedStateParsed die Bodies und Composites aus dem gespeicherten Zustand
+            bodiesSaveState = savedStateParsed.bodies || [];
+            compositesSaveState = savedStateParsed.composites || [];
+    
+            console.log('Bodies restored:', bodiesSaveState);
+            console.log('Composites restored:', compositesSaveState);
+
+            loadSavedState();
+        } else {
+            console.log('No saved state to restore.');
+        }
     };
 
-    const fetchDataV2 = async () => {
-        const response = await fetch('/api/dataV2');
-        const data = await response.json();
-        console.log(data);
+    const serializeSceneState = () => {
+        const serializedState = stringify({
+            bodies: bodiesSaveState,
+            composites: compositesSaveState,
+        });
+        return serializedState
     };
 
     const postData = async () => {
-        const response = await fetch('/api/data', {
+        const saveStateJson = serializeSceneState()
+        const response = await fetch('/api/supaBaseTest', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: 'New Item' }),
+            body: JSON.stringify({ scene: saveStateJson }),
         });
-        const data = await response.json();
-        console.log(data);
+        console.log(await response.json());
     };
-
-    const TestAPI = () => {
+    
+    const saveOnline = () => {
         postData();
-        fetchDataV2();
+    }
+
+    const loadOnline = () => {
         fetchData();
     }
 
@@ -295,22 +312,35 @@ const PhysicsCanvas = () => {
                 fontSize: "16px",
                 cursor: "pointer",
                 borderRadius: "5px",
-                position: 'absolute', left: '400px', top: '20px'
+                position: 'absolute', left: '300px', top: '20px'
                 }}
             >
                 Load
             </button>
             <button
-                onClick={TestAPI}
+                onClick={saveOnline}
                 style={{
                 padding: "10px 20px",
                 fontSize: "16px",
                 cursor: "pointer",
                 borderRadius: "5px",
-                position: 'absolute', left: '700px', top: '20px'
+                position: 'absolute', left: '650px', top: '20px'
                 }}
             >
-                TestAPI
+                Save Online
+            </button>
+
+            <button
+                onClick={loadOnline}
+                style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                cursor: "pointer",
+                borderRadius: "5px",
+                position: 'absolute', left: '800px', top: '20px'
+                }}
+            >
+                Load Online
             </button>
             {/*Option menu next to the clicked Object*/}
             {/*{clickedObject && <ObjectOptionController clickedObject={clickedObject} />}*/}
