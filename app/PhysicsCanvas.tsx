@@ -27,8 +27,6 @@ const PhysicsCanvas = () => {
     const engineRef = useRef<Matter.Engine | null>(null);
     const runnerRef = useRef<Matter.Runner | null>(null);
     const renderRef = useRef<Matter.Renderer | null>(null);
-    const [message, setMessage] = useState("");
-    
     
     // SEHR UNSICHER OB DAS DER RICHTIG WEG IST DAS OBJEKT NEBEN DEM GEKLICKTEN OBJECT DARZUSTELLEN!!!
     // State, um ein neues Klickereignis auszulösen
@@ -39,6 +37,36 @@ const PhysicsCanvas = () => {
     let bodiesSaveState: Matter.Body[] = []
     let compositesSaveState: Matter.Composite[] = []
     //let constraintsSaveState: any[] = []
+
+
+    //Funktionen die die API testen
+    const fetchData = async () => {
+        const response = await fetch('/api/data');
+        const data = await response.json();
+        console.log(data);
+    };
+
+    const fetchDataV2 = async () => {
+        const response = await fetch('/api/dataV2');
+        const data = await response.json();
+        console.log(data);
+    };
+
+    const postData = async () => {
+        const response = await fetch('/api/data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: 'New Item' }),
+        });
+        const data = await response.json();
+        console.log(data);
+    };
+
+    const TestAPI = () => {
+        postData();
+        fetchDataV2();
+        fetchData();
+    }
 
     useEffect(() => {
         // Matter.js Setup
@@ -56,13 +84,6 @@ const PhysicsCanvas = () => {
             wireframes: false, // Set to true for debugging
         },
         });
-
-        const fetchMessage = async () => {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/hello`);
-            const data = await res.json();
-            setMessage(data.message);
-        };
-        fetchMessage();
         
         // run the renderer
         Render.run(render);
@@ -81,9 +102,7 @@ const PhysicsCanvas = () => {
         // add mouse control
         addMouseControl();
 
-        //addExampleChain to the System
-        addChain()
-
+        // Erstellt Erste Objekte in der Welt
         initializeObjectsInWorld();
 
         // Cleanup on component unmount
@@ -106,6 +125,9 @@ const PhysicsCanvas = () => {
 
         // add all of the bodies to the world
         Matter.Composite.add(engineRef.current.world, bodiesTest);
+
+        //addExampleChain to the System
+        addChain()
     }
 
     const addChain = () => {
@@ -238,8 +260,6 @@ const PhysicsCanvas = () => {
         }
     }
 
-
-
     return <div>
             {/*Pause/Play*/}
             <button
@@ -280,9 +300,20 @@ const PhysicsCanvas = () => {
             >
                 Load
             </button>
+            <button
+                onClick={TestAPI}
+                style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                cursor: "pointer",
+                borderRadius: "5px",
+                position: 'absolute', left: '700px', top: '20px'
+                }}
+            >
+                TestAPI
+            </button>
             {/*Option menu next to the clicked Object*/}
             {/*{clickedObject && <ObjectOptionController clickedObject={clickedObject} />}*/}
-            <div style={{position: 'absolute', top: '1000px', left: '200px'}}>{message}</div>
             <div ref={sceneRef}></div>    
             <ToolboxWrapper addBody={addBody}/>
         </div>;
