@@ -1,0 +1,94 @@
+:root {
+    --menu-width: 100px; /* Standardbreite des linken Menüs */
+}
+
+/* Container füllt die gesamte Seite */
+.container {
+    display: flex; /* Flexbox aktivieren */
+    height: 100vh; /* Gesamte Höhe des Viewports */
+    width: 100%; /* Gesamte Breite */
+}
+
+/* Linkes rotes Div */
+.menu-select-left {
+    background-color: rgba(60,60,70,255);
+    width: var(--menu-width); /* Feste Breite */
+    height: 100%; /* Gesamte Höhe */
+    display: flex; /* Flexbox aktivieren */
+    flex-direction: column; /* Elemente untereinander anordnen */
+    align-items: center; /* Optional: Zentriert die Kinder horizontal */
+    gap: 10px; /* Optional: Abstand zwischen den Elementen */
+    z-index: 2;
+    border-right: 6px solid rgba(80,80,90,255); /* Dezenter Rand */ 
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 1);
+    padding: 20px; /* Innenabstand */
+}
+
+/* Menü-Item (Icon und Text) */
+.menu-item-left {
+    display: flex;
+    flex-direction: column; /* Text unter dem Icon */
+    align-items: center; /* Zentriert den Text und das Icon */
+    justify-content: center; /* Vertikal zentriert */
+    width: 100%; /* Sorgt für gleichmäßige Breite */
+    gap: 5px; /* Abstand zwischen Icon und Text */
+  }
+  
+  /* Text unter dem Icon */
+  .menu-text {
+    font-size: 1rem; /* Textgröße */
+    color: white; /* Weiße Farbe */
+    text-align: center; /* Zentriere den Text */
+    word-wrap: break-word; /* Lange Wörter umbrechen, falls nötig */
+    max-width: 80px; /* Begrenze die Textbreite */
+  }
+
+/* Divider zwischen Menü-Items */
+.menu-divider {
+    width: 100%; /* Strich geht über die gesamte Breite */
+    height: 1px; /* Dicke des Strichs */
+    background-color: rgba(255, 255, 255, 0.2); /* Helle Farbe, leicht transparent */
+    margin: 10px 0; /* Abstand ober- und unterhalb des Strichs */
+}
+
+/* Icon-Styling */
+.icon {
+    font-size: 2.5rem; /* Größe des Icons */
+    color: white; /* Weiße Farbe für das Icon */
+}
+
+/* Text unter dem Icon */
+.menu-text {
+    font-size: 1rem; /* Textgröße */
+    color: white; /* Weiße Farbe */
+    text-align: center; /* Zentriere den Text */
+}
+
+.toolbox {
+    position: absolute;
+    top: 0;
+    left: -320px; /* Startpunkt der Animation (außerhalb des Bildschirms) */
+    width: 300px;
+    height: 100%;
+    background-color: rgba(60,60,70,255);
+    color: white;
+    z-index: 1; /* Hinter dem Menu */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    transition: left 0.5s ease; /* Sanfte Übergangsanimation */
+    z-index: 1;
+}
+
+.toolbox-visible {
+    /* TODO: Aktuell noch variabel aufgrund von Padding Addition: ist width von menu-select-left + padding*/
+    left: 140px; /* Zielpunkt der Animation */
+}
+
+/* Rechter flexibler Bereich */
+.scene {
+    flex: 1; /* Nimmt den verbleibenden Platz ein */
+    background-color: lightgray; /* Optional, um den Bereich sichtbar zu machen */
+    height: 100%; /* Gesamte Höhe */
+}

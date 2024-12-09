@@ -3,10 +3,12 @@
 import { useEffect, useRef, useState } from 'react';
 // @ts-expect-error: TS with external library
 import Matter from 'matter-js';
-import ToolboxWrapper from './ToolboxWrapper';
 // @ts-expect-error: TS with external library
 import _ from 'lodash';
 import { parse, stringify } from 'flatted';
+import "./PhysicsCanvas.css"
+import MenuTabLeft from './MenuTabLeft';
+import AdvancedMenu from './AdvancedMenu';
 
 //TODO:
 //Verändern der Parameter in der Simulation
@@ -96,7 +98,7 @@ const PhysicsCanvas = () => {
         element: sceneRef.current,
         engine: engine,
         options: {
-            width: innerWidth,
+            width: innerWidth-140,//150 is width of left menu. !!Hardcoding needs to be removed!!
             height: innerHeight,
             wireframes: false, // Set to true for debugging
         },
@@ -256,15 +258,16 @@ const PhysicsCanvas = () => {
             Matter.Engine.update(engineRef.current, 0);
 
             // Gespeicherte Objekte hinzufügen
-            Matter.Composite.add(engineRef.current.world, bodiesSaveState);
-            Matter.Composite.add(engineRef.current.world, compositesSaveState);
+            // TODO: Are all of those _.cloneDeep needed?
+            Matter.Composite.add(engineRef.current.world, _.cloneDeep(bodiesSaveState));
+            Matter.Composite.add(engineRef.current.world, _.cloneDeep(compositesSaveState));
             //Matter.Composite.add(engineRef.current.world, constraintsSaveState);
             
             // Maussteuerung neu hinzufügen
             addMouseControl();
 
             // Zustand speichern
-            saveCurrentState();
+            //saveCurrentState();
         }
     }
 
@@ -277,75 +280,33 @@ const PhysicsCanvas = () => {
         }
     }
 
-    return <div>
-            {/*Pause/Play*/}
-            <button
-                onClick={PausePlay}
-                style={{
-                padding: "10px 20px",
-                fontSize: "16px",
-                cursor: "pointer",
-                borderRadius: "5px",
-                position: 'absolute', left: '20px', top: '20px'
-                }}
-            >
-                Pause/Play
-            </button>
-            {/*Save*/}
-            <button
-                onClick={saveCurrentState}
-                style={{
-                padding: "10px 20px",
-                fontSize: "16px",
-                cursor: "pointer",
-                borderRadius: "5px",
-                position: 'absolute', left: '200px', top: '20px'
-                }}
-            >
-                Save
-            </button>
-            {/*Load*/}
-            <button
-                onClick={loadSavedState}
-                style={{
-                padding: "10px 20px",
-                fontSize: "16px",
-                cursor: "pointer",
-                borderRadius: "5px",
-                position: 'absolute', left: '300px', top: '20px'
-                }}
-            >
-                Load
-            </button>
-            <button
-                onClick={saveOnline}
-                style={{
-                padding: "10px 20px",
-                fontSize: "16px",
-                cursor: "pointer",
-                borderRadius: "5px",
-                position: 'absolute', left: '650px', top: '20px'
-                }}
-            >
-                Save Online
-            </button>
+    //Used to show the tab next to the menu tab
+    //TODO: The Tabs should get enums and not lose strings
+    const [activeAdvancedMenu, setActiveAdvancedMenu] = useState<string | null>(null);
+    const handleActiveAndvancedMenu = (advancedMenuName: string) => {
+        setActiveAdvancedMenu((prev) => (prev === advancedMenuName ? null : advancedMenuName));
+    };
 
-            <button
-                onClick={loadOnline}
-                style={{
-                padding: "10px 20px",
-                fontSize: "16px",
-                cursor: "pointer",
-                borderRadius: "5px",
-                position: 'absolute', left: '800px', top: '20px'
-                }}
-            >
-                Load Online
-            </button>
+    return <div className='container'>
+
+            {/* Left Menu tab with icons  */}
+            <MenuTabLeft PausePlay={PausePlay} saveCurrentState={saveCurrentState} loadSavedState={loadSavedState} saveOnline={saveOnline} loadOnline={loadOnline} handleActiveAndvancedMenu={handleActiveAndvancedMenu} />
+           
+           {/* Each Tab that can be opend from the left Menu */}
+            <div className={`toolbox ${activeAdvancedMenu === "Toolbox" ? "toolbox-visible" : ""}`}>
+                {activeAdvancedMenu === "Toolbox" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody}/>}
+            </div>
+            <div className={`toolbox ${activeAdvancedMenu === "Cloud" ? "toolbox-visible" : ""}`}>
+                {activeAdvancedMenu === "Cloud" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody}/>}
+            </div>
+            <div className={`toolbox ${activeAdvancedMenu === "Tracking" ? "toolbox-visible" : ""}`}>
+                {activeAdvancedMenu === "Tracking" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody}/>}
+            </div>
             {/*Option menu next to the clicked Object*/}
             {/*{clickedObject && <ObjectOptionController clickedObject={clickedObject} />}*/}
-            <div ref={sceneRef}></div>    
-            <ToolboxWrapper addBody={addBody}/>
+
+            {/* div which contains the actuall physics engine */}
+            <div className='scene' ref={sceneRef}></div>    
         </div>;
 };
 
