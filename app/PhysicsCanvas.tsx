@@ -140,7 +140,12 @@ const PhysicsCanvas = () => {
         const groundB = Matter.Bodies.rectangle(800, 700, 810, 20, { isStatic: true, angle: -Math.PI / 8 });
         const groundC = Matter.Bodies.rectangle(400, 1000, 810, 20, { isStatic: true, angle: Math.PI / 8 });
         const groundD = Matter.Bodies.rectangle(1200, 1300, 2400, 20, { isStatic: true});
-        const bodiesTest = [boxA,boxB,groundA,groundB,groundC,groundD]
+
+        const crateA = Matter.Bodies.rectangle(2000, 500, 800, 20, { isStatic: true});
+        const crateB = Matter.Bodies.rectangle(1750, 750, 800, 20, { isStatic: true, angle: -Math.PI / 2 });
+        const crateC = Matter.Bodies.rectangle(2250, 750, 800, 20, { isStatic: true, angle: Math.PI / 2 });
+        const crateD = Matter.Bodies.rectangle(2000, 1000, 800, 20, { isStatic: true});
+        const bodiesTest = [boxA,boxB,groundA,groundB,groundC,groundD,crateA,crateB,crateC,crateD]
 
         // add all of the bodies to the world
         Matter.Composite.add(engineRef.current.world, bodiesTest);
@@ -193,7 +198,7 @@ const PhysicsCanvas = () => {
         const mouseConstraint = Matter.MouseConstraint.create(engine, {
             mouse: mouse,
             constraint: {
-                stiffness: 0.8,
+                stiffness: 0.2,
                 render: {
                     visible: true
                 }
@@ -215,9 +220,11 @@ const PhysicsCanvas = () => {
 
             // Setzt den State mit dem geclickten Objekt gleich
             if (clickedBody) {
-                clickedBodyRef.current = clickedBody;
+                clickedBodyRef.current = clickedBody;//TODO: Think this isnt used anymore                
                 setClickedObject(clickedBody); // Setze den State, um das ObjectOptionController zu aktualisieren
-                console.log(clickedObject)
+                setActiveAdvancedMenu((prev) => (prev === null ? 'Inspector' : prev)); //TODO: Does this cause not need rerenders?
+            }else{
+                setClickedObject(null); //TODO: Think this if statement can be simplified, since both setClickedObject do the same
             }
         });
         
@@ -294,13 +301,16 @@ const PhysicsCanvas = () => {
            
            {/* Each Tab that can be opend from the left Menu */}
             <div className={`toolbox ${activeAdvancedMenu === "Toolbox" ? "toolbox-visible" : ""}`}>
-                {activeAdvancedMenu === "Toolbox" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody}/>}
+                {activeAdvancedMenu === "Toolbox" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody} clickedObject={clickedObject}/>}
             </div>
             <div className={`toolbox ${activeAdvancedMenu === "Cloud" ? "toolbox-visible" : ""}`}>
-                {activeAdvancedMenu === "Cloud" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody}/>}
+                {activeAdvancedMenu === "Cloud" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody} clickedObject={clickedObject}/>}
             </div>
             <div className={`toolbox ${activeAdvancedMenu === "Tracking" ? "toolbox-visible" : ""}`}>
-                {activeAdvancedMenu === "Tracking" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody}/>}
+                {activeAdvancedMenu === "Tracking" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody} clickedObject={clickedObject}/>}
+            </div>
+            <div className={`toolbox ${activeAdvancedMenu === "Inspector" ? "toolbox-visible" : ""}`}>
+                {activeAdvancedMenu === "Inspector" && <AdvancedMenu AdvancedMenuName={activeAdvancedMenu} addBody={addBody} clickedObject={clickedObject}/>}
             </div>
             {/*Option menu next to the clicked Object*/}
             {/*{clickedObject && <ObjectOptionController clickedObject={clickedObject} />}*/}

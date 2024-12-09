@@ -1,0 +1,23 @@
+/* Container für das Eigenschaften-Panel */
+.properties-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Abstand zwischen den Zeilen */
+    padding: 20px;
+    background-color: rgba(60, 60, 70, 255);
+    color: white;
+    border-radius: 8px;
+}
+  
+  /* Einzelne Zeile für eine Eigenschaft */
+.property-row {
+    display: flex;
+    justify-content: space-between; /* Zwei Spalten */
+    align-items: center; /* Zentriere vertikal */
+    padding: 10px;
+    border-bottom: 1px solid rgba
+}  
+
+.property-name{
+    padding: 10px;
+}

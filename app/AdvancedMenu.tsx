@@ -6,9 +6,10 @@ import { Construction } from "@mui/icons-material";
 // @ts-expect-error: TS with external library
 import Matter from 'matter-js';
 import Toolbox from "./Toolbox";
+import InspectorMenu from "./InspectorMenu";
 
 //TODO: Each Tab needs an close button
-const AdvancedMenu = (props: { AdvancedMenuName: string, addBody: (body: Matter.Bodies) => void}) => {
+const AdvancedMenu = (props: { AdvancedMenuName: string, addBody: (body: Matter.Body) => void, clickedObject: Matter.Body | null}) => {
   let content;
   switch (props.AdvancedMenuName) {
     case "Toolbox":
@@ -33,6 +34,9 @@ const AdvancedMenu = (props: { AdvancedMenuName: string, addBody: (body: Matter.
                         Content specific to Tracking needs to be added. Planned for features like Graphs, Visualization.
                     </div>
                 </div>
+      break;
+    case "Inspector":
+        content = <InspectorMenu clickedObject={props.clickedObject} />;
       break;
     default:
       content = <div>No content available</div>;

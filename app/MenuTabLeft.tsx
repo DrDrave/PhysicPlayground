@@ -10,6 +10,7 @@ import TimelineIcon from '@mui/icons-material/Timeline';
 import UploadIcon from '@mui/icons-material/Upload';
 import DownloadIcon from '@mui/icons-material/Download';
 import ReplayIcon from '@mui/icons-material/Replay';
+import BuildIcon from '@mui/icons-material/Build';
 
 const MenuTabLeft = (props: {PausePlay: () => void, saveCurrentState: () => void, loadSavedState: () => void, saveOnline: () => void, loadOnline: () => void, handleActiveAndvancedMenu: (advandedMenuName: string) => void}) => {
 
@@ -62,6 +63,14 @@ const MenuTabLeft = (props: {PausePlay: () => void, saveCurrentState: () => void
                 <HomeRepairServiceIcon className="icon" />
             </IconButton>
             <div className="menu-text">Toolbox</div>
+        </div>
+        <div className="menu-divider"></div>
+        {/*Anpassen*/}
+        <div className="menu-item-left">
+            <IconButton aria-label="pause-play" onClick={() => props.handleActiveAndvancedMenu('Inspector')}>
+                <BuildIcon className="icon" />
+            </IconButton>
+            <div className="menu-text">Inspector</div>
         </div>
         <div className="menu-divider"></div>
         {/*Cloud*/}
